@@ -3,9 +3,16 @@
 扫描Smart Money信号并发送Telegram通知
 """
 import os
+import sys
 import json
 from datetime import datetime
 from typing import List, Dict
+
+# 设置UTF-8编码输出（Windows兼容）
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 from nansen_client import NansenClient
 from signal_scorer import SignalScorer
 from telegram_bot import TelegramNotifier
