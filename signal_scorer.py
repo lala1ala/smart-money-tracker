@@ -118,8 +118,8 @@ class SignalScorer:
         score = 0
         details = []
 
-        change_1h = token.get("price_change_1h", 0)
-        change_24h = token.get("price_change_24h", 0)
+        change_1h = token.get("price_change_1h") or 0
+        change_24h = token.get("price_change_24h") or 0
 
         # 1小时涨幅 (15分) - 不要追高
         if 5 <= change_1h <= 20:

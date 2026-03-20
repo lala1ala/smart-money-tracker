@@ -63,32 +63,51 @@ def merge_token_data(netflow_tokens: List[Dict], screener_tokens: List[Dict]) ->
     """合并Smart Money净流入和代币筛选数据"""
     merged = {}
 
-    # 处理净流入数据
-    for token in netflow_tokens:
-        address = token.get("token_address") or token.get("address")
+    # 先用screener数据建立基础（包含价格和交易量）
+    for token in screener_tokens:
+        address = token.get("token_address")
         if address:
             merged[address] = {
                 "address": address,
-                "symbol": token.get("symbol", "UNKNOWN"),
+                "symbol": token.get("token_symbol", "UNKNOWN"),
                 "chain": token.get("chain", ""),
-                "price": token.get("price", 0),
-                "price_change_1h": token.get("price_change_1h", 0),
-                "price_change_24h": token.get("price_change_24h", 0),
-                "netflow_1h": token.get("net_flow_1h_usd", 0),
-                "netflow_24h": token.get("net_flow_24h_usd", 0),
+                "price": token.get("price_usd", 0),
+                "price_change_1h": 0,  # API不提供，用0
+                "price_change_24h": token.get("price_change", 0),  # 使用总体价格变化
+                "netflow_1h": 0,
+                "netflow_24h": 0,
                 "smart_money_count": 0,
-                "smart_money_avg_roi": 0,
+                "smart_money_avg_roi": 150,  # 默认值
                 "smart_money_total_amount": 0,
-                "volume_24h": 0,
-                "holder_concentration": 0
+                "volume_24h": token.get("volume", 0),
+                "holder_concentration": 0.3  # 默认值
             }
 
-    # 合并筛选器数据
-    for token in screener_tokens:
-        address = token.get("token_address") or token.get("address")
+    # 合并netflow数据
+    for token in netflow_tokens:
+        address = token.get("token_address")
         if address and address in merged:
-            merged[address]["volume_24h"] = token.get("volume_24h", 0)
-            merged[address]["holder_concentration"] = token.get("holder_concentration", 0)
+            merged[address]["netflow_1h"] = token.get("net_flow_1h_usd", 0)
+            merged[address]["netflow_24h"] = token.get("net_flow_24h_usd", 0)
+            merged[address]["smart_money_count"] = token.get("trader_count", 1)
+            merged[address]["smart_money_total_amount"] = abs(token.get("net_flow_1h_usd", 0))
+        elif address:
+            # 只有netflow数据，没有screener数据
+            merged[address] = {
+                "address": address,
+                "symbol": token.get("token_symbol", "UNKNOWN"),
+                "chain": token.get("chain", ""),
+                "price": 0,
+                "price_change_1h": 0,
+                "price_change_24h": 0,
+                "netflow_1h": token.get("net_flow_1h_usd", 0),
+                "netflow_24h": token.get("net_flow_24h_usd", 0),
+                "smart_money_count": token.get("trader_count", 1),
+                "smart_money_avg_roi": 150,
+                "smart_money_total_amount": abs(token.get("net_flow_1h_usd", 0)),
+                "volume_24h": 0,
+                "holder_concentration": 0.3
+            }
 
     return list(merged.values())
 
@@ -127,6 +146,7 @@ def main():
     print(f"📋 已过滤过去24小时内通知的代币: {len(sent_tokens)}个\n")
 
     all_signals = []
+    total_scanned = 0
 
     # 扫描每条链
     for chain in CHAINS:
@@ -142,17 +162,13 @@ def main():
 
         # 合并数据
         merged_tokens = merge_token_data(netflow_data, screener_data)
+        total_scanned += len(merged_tokens)
 
         # 评分
         for token in merged_tokens:
             # 跳过已发送的代币
             if token["address"] in sent_tokens:
                 continue
-
-            # 简化Smart Money统计（实际应该从positions API获取）
-            token["smart_money_count"] = len([t for t in netflow_data if t.get("token_address") == token["address"]])
-            token["smart_money_avg_roi"] = token.get("smart_money_avg_roi", 150)  # 默认值
-            token["smart_money_total_amount"] = abs(token.get("netflow_1h", 0))
 
             # 评分
             score_result = scorer.score_token(token)
@@ -172,7 +188,7 @@ def main():
     top_signals = all_signals[:MAX_SIGNALS_PER_RUN]
 
     print(f"\n📊 本轮扫描结果:")
-    print(f"   - 扫描代币总数: {sum([len([t for t in []]) for _ in CHAINS])}")
+    print(f"   - 扫描代币总数: {total_scanned}")
     print(f"   - 高分信号数: {len(all_signals)}")
     print(f"   - 发送通知数: {len(top_signals)}")
     print(f"   - 最低分数线: {MIN_SCORE_THRESHOLD}分\n")
