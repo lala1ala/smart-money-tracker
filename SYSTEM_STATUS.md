@@ -1,64 +1,64 @@
 # Smart Money Tracker - 当前状态
 
-> **更新时间**: 2026-03-21
-> **系统状态**: ✅ 已上线运行
+> **更新时间**: 2026-03-21 12:37
+> **系统状态**: ✅ 已上线运行（平衡方案 + 稳定币过滤）
 
 ---
 
-## 📊 当前配置
+## 📊 当前配置（平衡方案）
 
 ### API消耗情况
 - **总配额**: 1,666,248 credits（8个月有效）
 - **已消耗**: 40 credits（0.002%）
 - **剩余**: 1,666,208 credits
-- **每次扫描消耗**: ~40 credits
 
-### 当前扫描配置
+### 当前扫描配置 ✅ 已优化
 ```
-扫描频率: 每小时1次
-扫描链数: 3条（ethereum, solana, base）
+扫描频率: 每30分钟1次
+扫描链数: 5条（ethereum, solana, base, arbitrum, bnb）
 评分阈值: 70分
-每天消耗: 960 credits
-8个月总消耗: 230,400 credits（14%）
+每天消耗: 1,600 credits
+8个月总消耗: 384,000 credits（23%）
 ```
 
-**问题：配额大量浪费（86%剩余！）**
+**优化状态**: ✅ 配额利用率合理（剩余77%）
 
 ---
 
-## ⚠️ 待决定事项
+## ❓ 为什么12小时没有推送？
 
-### 优化方案选择
+### 可能原因分析
 
-需要你明天决定选择哪个优化方案：
+1. **系统正常运行，但市场无优质信号**（最可能）
+   - 当前最高分: 53分（USDC, AAVE, TRIPLET）
+   - 推送阈值: 70分
+   - **这是"宁缺毋滥"的设计，不推送是正常的**
 
-#### 方案A：每15分钟扫描一次（激进）
-```
-优点: 最及时捕捉机会
-消耗: 每天3,840 credits
-8个月消耗: 921,600 credits（55%）
-```
+2. **GitHub Actions未运行**
+   - 检查方法: 访问 https://github.com/lola1ala/smart-money-tracker/actions
+   - 查看是否有绿色勾（成功运行）
+   - 点击最近一次运行查看日志
 
-#### 方案B：增加到10条链（覆盖更广）
-```
-优点: 覆盖更多公链
-消耗: 每天3,200 credits
-8个月消耗: 768,000 credits（46%）
-需要确认Nansen支持哪些链
-```
+3. **推送失败**
+   - 检查Telegram Bot是否正常
+   - 查看GitHub Actions日志中的错误信息
 
-#### 方案C：每30分钟 + 5条链（平衡）✅推荐
+### 如何验证系统是否工作？
+
+**方法1**: 访问GitHub Actions页面
 ```
-优点: 及时性和覆盖面平衡
-消耗: 每天1,600 credits
-8个月消耗: 384,000 credits（23%）
+https://github.com/lola1ala/smart-money-tracker/actions
 ```
 
-#### 方案D：保持现状（保守）
-```
-不修改，继续当前配置
-但会浪费86%的配额
-```
+**方法2**: 查看扫描日志
+- 在GitHub Actions页面，点击任意一次运行
+- 展开"Run Smart Money Scanner"步骤
+- 查看"📊 扫描统计"部分的输出
+
+**方法3**: 手动触发测试
+- 在GitHub Actions页面
+- 点击"Run workflow"按钮
+- 手动触发一次扫描
 
 ---
 
@@ -143,13 +143,44 @@ git push
 
 ---
 
-## 💡 给明天自己的提示
+## ✅ 优化完成记录
 
-1. **决定优化方案**（A/B/C/D）
-2. 检查Nansen API支持的链列表
-3. 如果改配置，记得：
-   - 修改 `.github/workflows/scan.yml` 的cron
-   - 修改 `config.py` 的 CHAINS 和 SCAN_INTERVAL_HOURS
-   - git commit 并 push
+### 2026-03-21 12:37 - 新增稳定币自动过滤
 
-**明天见！** 🚀
+**需求**: 用户不希望收到任何稳定币推送
+
+**已更新**:
+- ✅ scanner.py: 添加稳定币黑名单（45+个币种）
+- ✅ 包括：主流稳定币（USDT, USDC等）、包装币（WBTC, WETH等）、质押衍生品
+- ✅ 自动跳过评分，不消耗API配额
+- ✅ 扫描日志中显示过滤数量
+
+**过滤列表**:
+```
+主流稳定币: USDT, USDC, DAI, USDD, FRAX, TUSD, PYUSD, FDUSD等
+包装币: WBTC, WETH, CBETH, WSTETH, RETH, CBBTC, XAUT等
+质押币: JITOSOL, JUPSOL, BSOL, BNSOL, QETH, ETH2X等
+```
+
+**已提交并推送到GitHub**
+
+### 2026-03-21 12:00 - 平衡方案实施
+
+**已更新**:
+- ✅ config.py: 扫描频率改为30分钟，链数改为5条
+- ✅ scan.yml: cron改为`*/30 * * * *`
+- ✅ 已提交并推送到GitHub
+
+**新配置预期**:
+- 每30分钟扫描5条链
+- 每天消耗约1,600 credits
+- 8个月消耗约384,000 credits（23%）
+- 配额利用率合理，剩余77%
+
+---
+
+## 💡 系统提示
+
+- 每次修改配置后，必须 `git commit && git push` 才会生效
+- GitHub Actions页面: https://github.com/lola1ala/smart-money-tracker/actions
+- 如需手动触发：在Actions页面点击"Run workflow"
