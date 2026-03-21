@@ -26,6 +26,24 @@ from config import (
     MAX_SIGNALS_PER_RUN
 )
 
+# 稳定币黑名单（不推送通知）
+STABLECOIN_BLACKLIST = {
+    # 主流稳定币
+    "USDT", "USDC", "USX", "EURC", "SUSDE", "DAI", "TUSD", "USDD",
+    "FRAX", "PYUSD", "FDUSD", "USDP", "GUSD", "BUSD", "USDB", "USDE",
+    "USDC.E", "USDT.E", "USDN", "USDX", "USTB",
+
+    # 包装币和质押币
+    "XAUT", "CBBTC", "WBTC", "WETH", "CBETH", "WSTETH", "RETH",
+    "QETH", "ETH2X", "HEG",
+
+    # Solana质押衍生品
+    "JITOSOL", "JUPSOL", "BSOL", "BNSOL",
+
+    # 其他稳定币相关
+    "MSUSD", "SYRUPUSDC", "USD1", "USDG"
+}
+
 def load_sent_tokens() -> set:
     """加载已发送的代币地址（避免重复通知）"""
     try:
@@ -147,6 +165,7 @@ def main():
 
     all_signals = []
     total_scanned = 0
+    filtered_stablecoins = 0
 
     # 扫描每条链
     for chain in CHAINS:
@@ -166,6 +185,11 @@ def main():
 
         # 评分
         for token in merged_tokens:
+            # 跳过稳定币
+            if token["symbol"] in STABLECOIN_BLACKLIST:
+                filtered_stablecoins += 1
+                continue
+
             # 跳过已发送的代币
             if token["address"] in sent_tokens:
                 continue
@@ -189,6 +213,7 @@ def main():
 
     print(f"\n📊 本轮扫描结果:")
     print(f"   - 扫描代币总数: {total_scanned}")
+    print(f"   - 过滤稳定币: {filtered_stablecoins}个")
     print(f"   - 高分信号数: {len(all_signals)}")
     print(f"   - 发送通知数: {len(top_signals)}")
     print(f"   - 最低分数线: {MIN_SCORE_THRESHOLD}分\n")
@@ -217,7 +242,8 @@ def main():
     # 保存扫描日志
     log_entry = {
         "timestamp": datetime.now().isoformat(),
-        "total_scanned": 0,
+        "total_scanned": total_scanned,
+        "filtered_stablecoins": filtered_stablecoins,
         "high_score_signals": len(all_signals),
         "signals_sent": len(top_signals),
         "top_signals": [
