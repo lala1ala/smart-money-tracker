@@ -1,0 +1,93 @@
+Top 10 Signals - BASE
+================================================================================
+
+Symbol: VIRTUAL
+Price: $0.7067
+Score: 58/100
+Recommendation: ❌ 观望为主
+Volume 24h: $204,465
+Smart Money Count: 12
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: MOLT
+Price: $0.0000
+Score: 53/100
+Recommendation: ❌ 观望为主
+Volume 24h: $3,663
+Smart Money Count: 6
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: EURC
+Price: $1.1557
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $1,496,125
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: USDT
+Price: $0.9991
+Score: 38/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $87,180
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: UNIBTC
+Price: $69323.0733
+Score: 38/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $34,974
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: ZRO
+Price: $2.0137
+Score: 38/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $122,420
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: ZEN
+Price: $5.7155
+Score: 38/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $194,119
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: DIEM
+Price: $759.3228
+Score: 38/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $21,841
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: PING
+Price: $0.0022
+Score: 38/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $32,476
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: 🌱 RH
+Price: $0.0000
+Score: 38/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $13,051
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+

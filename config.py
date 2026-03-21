@@ -14,12 +14,12 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 # 扫描配置
-SCAN_INTERVAL_HOURS = int(os.getenv("SCAN_INTERVAL_HOURS", 1))
+SCAN_INTERVAL_HOURS = int(os.getenv("SCAN_INTERVAL_HOURS", 0.5))  # 30分钟
 MIN_SCORE_THRESHOLD = int(os.getenv("MIN_SCORE_THRESHOLD", 70))
 MAX_SIGNALS_PER_RUN = int(os.getenv("MAX_SIGNALS_PER_RUN", 5))
 
-# 链配置
-CHAINS = ["ethereum", "solana", "base"]
+# 链配置（平衡方案：5条主流链）
+CHAINS = ["ethereum", "solana", "base", "arbitrum", "bnb"]
 
 # 评分权重
 WEIGHTS = {

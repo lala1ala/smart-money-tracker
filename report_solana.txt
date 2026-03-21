@@ -1,0 +1,93 @@
+Top 10 Signals - SOLANA
+================================================================================
+
+Symbol: TRIPLET
+Price: $0.0024
+Score: 53/100
+Recommendation: ❌ 观望为主
+Volume 24h: $19,346
+Smart Money Count: 5
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: USX
+Price: $0.9997
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $1,344,696
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: USD1
+Price: $0.9991
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $6,362,257
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: 🌱 CHIBI
+Price: $0.0003
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $7,855,184
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: 🌱 FOID
+Price: $0.0003
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $1,205,350
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: 🌱 TERAFAB
+Price: $0.0001
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $3,626,295
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: 🌱 NATGAS
+Price: $0.0003
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $2,524,642
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: 🌱 CHUCK
+Price: $0.0000
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $2,167,615
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: 🌱 CUJO
+Price: $0.0001
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $2,304,807
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: 🌱 OPENCLAW
+Price: $0.0004
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $1,314,615
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+

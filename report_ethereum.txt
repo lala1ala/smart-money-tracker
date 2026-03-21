@@ -1,0 +1,93 @@
+Top 10 Signals - ETHEREUM
+================================================================================
+
+Symbol: USDC
+Price: $0.9999
+Score: 53/100
+Recommendation: ❌ 观望为主
+Volume 24h: $19,424,517
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: AAVE
+Price: $110.4489
+Score: 53/100
+Recommendation: ❌ 观望为主
+Volume 24h: $26,924
+Smart Money Count: 5
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: SYRUPUSDC
+Price: $1.1561
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $5,279,986
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: USDE
+Price: $0.9998
+Score: 48/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $9,312,690
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: RLUSD
+Price: $0.9998
+Score: 43/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $890,476
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: RSETH
+Price: $2282.4766
+Score: 43/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $565,525
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: XAUT
+Price: $4590.2653
+Score: 43/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $768,419
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: USDS
+Price: $0.9998
+Score: 38/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $488,216
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: GHO
+Price: $0.9997
+Score: 38/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $329,713
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+
+Symbol: USDG
+Price: $0.9999
+Score: 38/100
+Recommendation: 🛑 不建议买入
+Volume 24h: $220,900
+Smart Money Count: 0
+Netflow 1h: $0
+----------------------------------------
+

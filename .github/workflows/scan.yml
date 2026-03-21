@@ -2,8 +2,8 @@ name: Smart Money Scanner
 
 on:
   schedule:
-    # 每小时执行一次（使用cron语法）
-    - cron: '0 * * * *'
+    # 每30分钟执行一次（平衡方案）
+    - cron: '*/30 * * * *'
 
   workflow_dispatch: # 允许手动触发
 
