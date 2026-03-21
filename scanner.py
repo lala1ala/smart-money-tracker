@@ -14,7 +14,7 @@ if sys.platform == 'win32':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 from nansen_client import NansenClient
-from signal_scorer import SignalScorer
+from signal_scorer_v2 import SignalScorerV2
 from telegram_bot import TelegramNotifier
 from config import (
     NANSEN_API_KEY,
@@ -77,12 +77,17 @@ def save_sent_token(address: str):
     except Exception as e:
         print(f"保存已发送代币失败: {e}")
 
-def merge_token_data(netflow_tokens: List[Dict], screener_tokens: List[Dict]) -> List[Dict]:
-    """合并Smart Money净流入和代币筛选数据"""
+def merge_token_data_multi_timeframe(
+    netflow_tokens: List[Dict],
+    screener_1h: List[Dict],
+    screener_6h: List[Dict],
+    screener_24h: List[Dict]
+) -> List[Dict]:
+    """合并Smart Money净流入和多个时间窗口的代币筛选数据"""
     merged = {}
 
-    # 先用screener数据建立基础（包含价格和交易量）
-    for token in screener_tokens:
+    # 先用1h screener数据建立基础
+    for token in screener_1h:
         address = token.get("token_address")
         if address:
             merged[address] = {
@@ -90,24 +95,54 @@ def merge_token_data(netflow_tokens: List[Dict], screener_tokens: List[Dict]) ->
                 "symbol": token.get("token_symbol", "UNKNOWN"),
                 "chain": token.get("chain", ""),
                 "price": token.get("price_usd", 0),
-                "price_change_1h": 0,  # API不提供，用0
-                "price_change_24h": token.get("price_change", 0),  # 使用总体价格变化
+                # 1h数据
+                "price_change_1h": token.get("price_change", 0),
+                "volume_1h": token.get("volume", 0),
                 "netflow_1h": 0,
-                "netflow_24h": 0,
-                "smart_money_count": 0,
-                "smart_money_avg_roi": 150,  # 默认值
-                "smart_money_total_amount": 0,
+                "smart_money_count_1h": 0,
+                # 6h数据（稍后填充）
+                "price_change_6h": 0,
+                "volume_6h": 0,
+                "netflow_6h": 0,
+                "smart_money_count_6h": 0,
+                # 24h数据
+                "price_change_24h": token.get("price_change", 0),
                 "volume_24h": token.get("volume", 0),
-                "holder_concentration": 0.3  # 默认值
+                "netflow_24h": 0,
+                "smart_money_count_24h": 0,
+                # 其他
+                "smart_money_avg_roi": 150,
+                "holder_concentration": 0.3
             }
 
-    # 合并netflow数据
+    # 合并6h screener数据
+    for token in screener_6h:
+        address = token.get("token_address")
+        if address and address in merged:
+            merged[address]["price_change_6h"] = token.get("price_change", 0)
+            merged[address]["volume_6h"] = token.get("volume", 0)
+            merged[address]["netflow_6h"] = token.get("netflow", 0)
+
+    # 合并24h screener数据
+    for token in screener_24h:
+        address = token.get("token_address")
+        if address and address in merged:
+            merged[address]["price_change_24h"] = token.get("price_change", 0)
+            merged[address]["volume_24h"] = token.get("volume", 0)
+            merged[address]["netflow_24h"] = token.get("netflow", 0)
+
+    # 合并netflow数据（Smart Money信息）
     for token in netflow_tokens:
         address = token.get("token_address")
         if address and address in merged:
             merged[address]["netflow_1h"] = token.get("net_flow_1h_usd", 0)
             merged[address]["netflow_24h"] = token.get("net_flow_24h_usd", 0)
-            merged[address]["smart_money_count"] = token.get("trader_count", 1)
+            merged[address]["smart_money_count_1h"] = token.get("trader_count", 0)
+            # 估算6h和24h的Smart Money数量（基于流入比例）
+            if merged[address]["netflow_6h"] > 0:
+                ratio_6h = merged[address]["netflow_6h"] / (merged[address]["netflow_24h"] + 1)
+                merged[address]["smart_money_count_6h"] = int(token.get("trader_count", 0) * ratio_6h)
+            merged[address]["smart_money_count_24h"] = token.get("trader_count", 0)
             merged[address]["smart_money_total_amount"] = abs(token.get("net_flow_1h_usd", 0))
         elif address:
             # 只有netflow数据，没有screener数据
@@ -117,13 +152,19 @@ def merge_token_data(netflow_tokens: List[Dict], screener_tokens: List[Dict]) ->
                 "chain": token.get("chain", ""),
                 "price": 0,
                 "price_change_1h": 0,
+                "price_change_6h": 0,
                 "price_change_24h": 0,
+                "volume_1h": 0,
+                "volume_6h": 0,
+                "volume_24h": 0,
                 "netflow_1h": token.get("net_flow_1h_usd", 0),
+                "netflow_6h": 0,
                 "netflow_24h": token.get("net_flow_24h_usd", 0),
-                "smart_money_count": token.get("trader_count", 1),
+                "smart_money_count_1h": token.get("trader_count", 0),
+                "smart_money_count_6h": 0,
+                "smart_money_count_24h": token.get("trader_count", 0),
                 "smart_money_avg_roi": 150,
                 "smart_money_total_amount": abs(token.get("net_flow_1h_usd", 0)),
-                "volume_24h": 0,
                 "holder_concentration": 0.3
             }
 
@@ -151,12 +192,12 @@ def extract_smart_money_stats(netflow_tokens: List[Dict]) -> Dict[str, Dict]:
 def main():
     """主扫描流程"""
     print(f"\n{'='*60}")
-    print(f"🚀 Smart Money扫描开始 - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"🚀 Smart Money扫描开始 (增量监控v2) - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"{'='*60}\n")
 
     # 初始化客户端
     nansen = NansenClient(NANSEN_API_KEY)
-    scorer = SignalScorer(WEIGHTS)
+    scorer = SignalScorerV2(WEIGHTS)
     telegram = TelegramNotifier(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
 
     # 加载已发送的代币
@@ -175,15 +216,22 @@ def main():
         netflow_data = nansen.get_smart_money_netflow(chain, timeframe="1h", top_n=50)
         print(f"   - 净流入数据: {len(netflow_data)}条")
 
-        # 获取代币筛选数据
-        screener_data = nansen.get_token_screener(chain, timeframe="1h", top_n=50)
-        print(f"   - 筛选数据: {len(screener_data)}条")
+        # 获取3个时间窗口的screener数据
+        screener_1h = nansen.get_token_screener(chain, timeframe="1h", top_n=50)
+        print(f"   - 1h筛选数据: {len(screener_1h)}条")
+
+        screener_6h = nansen.get_token_screener(chain, timeframe="6h", top_n=50)
+        print(f"   - 6h筛选数据: {len(screener_6h)}条")
+
+        screener_24h = nansen.get_token_screener(chain, timeframe="24h", top_n=50)
+        print(f"   - 24h筛选数据: {len(screener_24h)}条")
 
         # 合并数据
-        merged_tokens = merge_token_data(netflow_data, screener_data)
+        merged_tokens = merge_token_data_multi_timeframe(
+            netflow_data, screener_1h, screener_6h, screener_24h
+        )
         total_scanned += len(merged_tokens)
 
-        # 评分
         for token in merged_tokens:
             # 跳过稳定币
             if token["symbol"] in STABLECOIN_BLACKLIST:
@@ -194,8 +242,35 @@ def main():
             if token["address"] in sent_tokens:
                 continue
 
-            # 评分
-            score_result = scorer.score_token(token)
+            # 准备三个时间窗口的数据
+            token_1h = {
+                "smart_money_count": token.get("smart_money_count_1h", 0),
+                "netflow_1h": token.get("netflow_1h", 0),
+                "price_change_1h": token.get("price_change_1h", 0),
+                "price_change_24h": token.get("price_change_24h", 0),
+                "volume_24h": token.get("volume_24h", 0)
+            }
+
+            token_6h = {
+                "smart_money_count": token.get("smart_money_count_6h", 0),
+                "netflow_1h": token.get("netflow_6h", 0),
+                "price_change_1h": token.get("price_change_6h", 0),
+                "price_change_24h": token.get("price_change_24h", 0),
+                "volume_24h": token.get("volume_6h", 0)
+            }
+
+            token_24h = {
+                "smart_money_count": token.get("smart_money_count_24h", 0),
+                "netflow_1h": token.get("netflow_24h", 0),
+                "price_change_1h": token.get("price_change_24h", 0),
+                "price_change_24h": token.get("price_change_24h", 0),
+                "volume_24h": token.get("volume_24h", 0)
+            }
+
+            # 增量评分
+            score_result = scorer.score_token_with_time_windows(
+                token_1h, token_6h, token_24h
+            )
 
             # 只保留高分信号
             if score_result["score"] >= MIN_SCORE_THRESHOLD:
