@@ -41,7 +41,10 @@ STABLECOIN_BLACKLIST = {
     "JITOSOL", "JUPSOL", "BSOL", "BNSOL",
 
     # 其他稳定币相关
-    "MSUSD", "SYRUPUSDC", "USD1", "USDG"
+    "MSUSD", "SYRUPUSDC", "USD1", "USDG",
+
+    # 原生公链代币
+    "SOL", "ETH", "BNB", "ARB", "MATIC", "AVAX"
 }
 
 def load_sent_tokens() -> set:
