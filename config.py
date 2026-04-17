@@ -15,7 +15,7 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 # 扫描配置
 SCAN_INTERVAL_HOURS = int(os.getenv("SCAN_INTERVAL_HOURS", 0.5))  # 30分钟
-MIN_SCORE_THRESHOLD = int(os.getenv("MIN_SCORE_THRESHOLD", 70))
+MIN_SCORE_THRESHOLD = int(os.getenv("MIN_SCORE_THRESHOLD", 30))  # 临时降低到30分（原70分）
 MAX_SIGNALS_PER_RUN = int(os.getenv("MAX_SIGNALS_PER_RUN", 5))
 
 # 链配置（平衡方案：5条主流链）

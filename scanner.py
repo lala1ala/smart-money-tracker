@@ -235,6 +235,12 @@ def main():
         )
         total_scanned += len(merged_tokens)
 
+        # 打印调试信息：Top 5代币数据
+        print(f'   📊 调试：Top 5代币净流入数据')
+        sorted_debug = sorted(merged_tokens, key=lambda x: x.get('netflow_24h', 0) + x.get('volume_24h', 0), reverse=True)[:5]
+        for idx, t in enumerate(sorted_debug, 1):
+            print(f'      #{idx} {t["symbol"]:8s} | 1h净流入: ${t.get("netflow_1h", 0):>10,.2f} | 24h净流入: ${t.get("netflow_24h", 0):>10,.2f} | SM数量: {t.get("smart_money_count_24h", 0):>2}个')
+
         for token in merged_tokens:
             # 跳过稳定币
             if token["symbol"] in STABLECOIN_BLACKLIST:
