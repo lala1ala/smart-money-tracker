@@ -14,7 +14,7 @@ if sys.platform == 'win32':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 from nansen_client import NansenClient
-from signal_scorer_v2 import SignalScorerV2
+from signal_scorer_v3 import SignalScorerV3
 from telegram_bot import TelegramNotifier
 from config import (
     NANSEN_API_KEY,
@@ -200,7 +200,7 @@ def main():
 
     # 初始化客户端
     nansen = NansenClient(NANSEN_API_KEY)
-    scorer = SignalScorerV2(WEIGHTS)
+    scorer = SignalScorerV3()WEIGHTS)
     telegram = TelegramNotifier(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
 
     # 加载已发送的代币
@@ -277,9 +277,7 @@ def main():
             }
 
             # 增量评分
-            score_result = scorer.score_token_with_time_windows(
-                token_1h, token_6h, token_24h
-            )
+            score_result = scorer.score_token(token)
 
             # 只保留高分信号
             if score_result["score"] >= MIN_SCORE_THRESHOLD:
