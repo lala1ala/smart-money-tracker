@@ -25,7 +25,7 @@ class SignalScorerV3:
         details = []
         
         # 1. 净流入评分（35分）- 用金额代替数量
-        netflow = token_data.get("netflow_24h", 0)
+        netflow = token_data.get("netflow_24h") or 0
         if netflow > 1000000:  # $1M+
             score += 35
             details.append(f"🚀 24h净流入: ${netflow:,.0f}")
@@ -40,7 +40,7 @@ class SignalScorerV3:
             details.append(f"📊 24h净流入: ${netflow:,.0f}")
         
         # 2. 交易量评分（30分）
-        volume = token_data.get("volume_24h", 0)
+        volume = token_data.get("volume_24h") or 0
         if volume > 10000000:  # $10M+
             score += 30
             details.append(f"💱 24h交易量: ${volume:,.0f}")
@@ -52,8 +52,8 @@ class SignalScorerV3:
             details.append(f"💱 24h交易量: ${volume:,.0f}")
         
         # 3. 价格趋势评分（20分）
-        price_change_1h = token_data.get("price_change_1h", 0)
-        price_change_24h = token_data.get("price_change_24h", 0)
+        price_change_1h = token_data.get("price_change_1h") or 0
+        price_change_24h = token_data.get("price_change_24h") or 0
         
         # 正向趋势
         if price_change_1h > 5 and price_change_24h > 10:
@@ -67,7 +67,7 @@ class SignalScorerV3:
             details.append(f"📊 微涨: 24h+{price_change_24h:.1f}%")
         
         # 4. 流动性评分（15分）
-        liquidity = token_data.get("liquidity", 0)
+        liquidity = token_data.get("liquidity") or 0
         if liquidity > 10000000:  # $10M+
             score += 15
             details.append(f"💧 高流动性: ${liquidity:,.0f}")
