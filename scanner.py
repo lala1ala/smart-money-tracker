@@ -200,7 +200,7 @@ def main():
 
     # 初始化客户端
     nansen = NansenClient(NANSEN_API_KEY)
-    scorer = SignalScorerV3()WEIGHTS)
+    scorer = SignalScorerV3(WEIGHTS)
     telegram = TelegramNotifier(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
 
     # 加载已发送的代币
