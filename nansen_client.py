@@ -11,7 +11,7 @@ class NansenClient:
         self.api_key = api_key
         self.base_url = "https://api.nansen.ai/api/v1"
         self.headers = {
-            "apiKey": api_key,
+            "apikey": api_key,  # 必须全小写，Nansen API 文档要求
             "Content-Type": "application/json"
         }
 
@@ -39,7 +39,7 @@ class NansenClient:
         try:
             response = requests.post(url, headers=self.headers, json=payload, timeout=30)
             if response.status_code != 200:
-                print(f"API Error: {response.status_code}")
+                print(f"API Error [{response.status_code}] netflow: {response.text[:200]}")
                 return []
             data = response.json()
             return data.get("data", [])
@@ -67,6 +67,7 @@ class NansenClient:
         try:
             response = requests.post(url, headers=self.headers, json=payload, timeout=30)
             if response.status_code != 200:
+                print(f"API Error [{response.status_code}] token-screener: {response.text[:200]}")
                 return []
             data = response.json()
             return data.get("data", [])
