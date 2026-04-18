@@ -34,11 +34,11 @@ class TelegramNotifier:
 
     def _format_message(self, token: Dict, score: Dict) -> str:
         """格式化通知消息 - 适配新的评分系统"""
-        symbol = token.get("symbol", "UNKNOWN")
-        chain = token.get("chain", "").upper()
-        price = token.get("price", 0)
-        price_change_1h = token.get("price_change_1h", 0)
-        price_change_24h = token.get("price_change_24h", 0)
+        symbol = token.get("symbol") or "UNKNOWN"
+        chain = (token.get("chain") or "").upper()
+        price = token.get("price") or 0
+        price_change_1h = token.get("price_change_1h") or 0
+        price_change_24h = token.get("price_change_24h") or 0
 
         breakdown = score["breakdown"]
         recommendation = score.get("recommendation", "")
